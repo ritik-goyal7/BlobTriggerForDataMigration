@@ -41,7 +41,7 @@ export async function saveOrders(event: EventGridEvent, context: InvocationConte
         return;
     }
 
-    const blobName = event.subject.split(`${BLOB_CONTAINER_NAME}/blobs`)[1];
+    const blobName = event.subject.split(`${BLOB_CONTAINER_NAME}/blobs/`)[1];
     if (!blobName) {
         context.info(`Exiting as blob not inserted in configured container: ${BLOB_CONTAINER_NAME}`);
     }
