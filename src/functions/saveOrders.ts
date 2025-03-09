@@ -71,11 +71,8 @@ export async function saveOrders(event: EventGridEvent, context: InvocationConte
             objectMode: true,
             write(chunk, encoding, callback) {
                 batch.push(chunk);
-                if (batch.length >= 100) { // Process in batches of 100
-                    // Process the batch here
+                if (batch.length >= 1000) { // Process in batches of 1000
                     context.log(`Processing batch of ${batch.length} items.`);
-
-                    // insert batch data in db
                     collection.insertMany(batch)
                         .then(() => {
                             context.log(`Inserted batch of ${batch.length} items.`);
@@ -86,10 +83,9 @@ export async function saveOrders(event: EventGridEvent, context: InvocationConte
                             context.error("Error inserting batch:", error);
                             callback(error);
                         });
-
-                    batch.length = 0; // Clear the batch
+                } else {
+                    callback();
                 }
-                callback();
             }
         });
 
