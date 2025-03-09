@@ -1,6 +1,6 @@
 import { app, EventGridEvent, InvocationContext } from "@azure/functions";
 import { StorageSharedKeyCredential, BlobServiceClient } from "@azure/storage-blob"
-import JSONStream from "JSONStream";
+import { parse } from "JSONStream";
 import { Writable } from 'stream';
 import { MongoClient, Db } from "mongodb";
 
@@ -65,7 +65,7 @@ export async function saveOrders(event: EventGridEvent, context: InvocationConte
 
         const collection = db.collection(COSMOS_DB_COLLECTION);
         const batch: any[] = [];
-        const jsonStream = JSONStream.parse('*');
+        const jsonStream = parse('*');
 
         const writableStream = new Writable({
             objectMode: true,
