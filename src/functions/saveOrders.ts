@@ -32,7 +32,7 @@ export async function saveOrders(event: EventGridEvent, context: InvocationConte
         BLOB_CONTAINER_NAME,
         BLOB_STORAGE_KEY
     } = process.env;
-    
+
     if (!COSMOS_DB_CONNECTION_STRING || !COSMOS_DB_NAME || !COSMOS_DB_COLLECTION || !BLOB_STORAGE_NAME || !BLOB_CONTAINER_NAME || !BLOB_STORAGE_KEY) {
         context.error("COSMOS_DB_CONNECTION_STRING, COSMOS_DB_NAME, COSMOS_DB_COLLECTION, BLOB_STORAGE_NAME, BLOB_CONTAINER_NAME, BLOB_STORAGE_KEY  are required for saveOrdersToDB function to run.");
         return;
@@ -113,7 +113,7 @@ export async function saveOrders(event: EventGridEvent, context: InvocationConte
         });
 
     } catch (error) {
-        context.error(`Error processing blob: ${error.message}`);
+        context.error(`Error processing blob: ${error}`);
     } finally {
         if (client) {
             await client.close();
