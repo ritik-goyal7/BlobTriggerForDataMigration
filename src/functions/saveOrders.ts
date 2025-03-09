@@ -8,7 +8,7 @@ import { MongoClient, Db } from "mongodb";
 function createBlobClient(blobStorageName: string, blobStorageKey: string) {
     const credentials = new StorageSharedKeyCredential(blobStorageName, blobStorageKey);
 
-    return new BlobServiceClient(`https://${blobStorageName}.privatelink.blob.core.windows.net`, credentials);
+    return new BlobServiceClient(`https://${blobStorageName}.blob.core.windows.net`, credentials);
 }
 async function connectDB(connectionString: string, dbName: string, context: InvocationContext): Promise<{ db: Db | null, client: MongoClient | null }> {
     try {
