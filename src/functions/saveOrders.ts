@@ -64,19 +64,19 @@ export async function saveOrders(event: EventGridEvent, context: InvocationConte
         }
 
         const collection = db.collection(COSMOS_DB_COLLECTION);
-        const batch: any[] = [];
+        let batch: any[] = [];
         const jsonStream = parse('*');
 
         const writableStream = new Writable({
             objectMode: true,
-            write(chunk, encoding, callback) {
+            async write(chunk, encoding, callback) {
                 batch.push(chunk);
                 if (batch.length >= 1000) { // Process in batches of 1000
                     context.log(`Processing batch of ${batch.length} items.`);
-                    collection.insertMany(batch)
+                    await collection.insertMany(batch)
                         .then(() => {
                             context.log(`Inserted batch of ${batch.length} items.`);
-                            batch.length = 0; // Clear the batch
+                            batch = []; // Clear the batch
                             callback();
                         })
                         .catch(error => {
@@ -91,15 +91,15 @@ export async function saveOrders(event: EventGridEvent, context: InvocationConte
 
         readableStream.pipe(jsonStream).pipe(writableStream);
 
-        writableStream.on('finish', () => {
+        writableStream.on('finish', async() => {
             if (batch.length > 0) {
                 // Process any remaining items in the batch
                 context.log(`Processing final batch of ${batch.length} items.`);
                 // insert batch data in db
-                collection.insertMany(batch)
+                await collection.insertMany(batch)
                 .then(() => {
                     context.log(`Inserted batch of ${batch.length} items.`);
-                    batch.length = 0; // Clear the batch
+                    batch = []; // Clear the batch
                 })
                 .catch(error => {
                     context.error("Error inserting batch:", error);
